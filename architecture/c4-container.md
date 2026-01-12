@@ -1,5 +1,3 @@
-# C4 — Container
-
 ```mermaid
 
 flowchart TB

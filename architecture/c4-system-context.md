@@ -1,45 +1,22 @@
 ```mermaid
 flowchart TB
-  user["ML Engineer / AIDM-Grupo-5"]
+  person["ML Engineer<br/>(AIDM-Grupo-5)"]
 
-  subgraph boundary["AIDM Loan Default MLOps System"]
-    studio["SageMaker Studio / Notebook<br/>Python Orchestrator"]
-    train["SageMaker Training Job<br/>(scikit-learn container)"]
-    hpo["SageMaker Hyperparameter Tuning Job"]
-    reg["SageMaker Model Registry<br/>(Model Package Group)"]
-    card["SageMaker Model Card + Dashboard"]
-    endpoint["SageMaker Endpoint<br/>(BYOC Inference Container)"]
-    datacapture["Endpoint Data Capture<br/>(Inference inputs)"]
-    monitor["SageMaker Model Monitor<br/>(Data Quality Schedule)"]
+  subgraph sys["AIDM Loan Default MLOps System"]
+    system["MLOps on Amazon SageMaker<br/>Loan Default Binary Classifier"]
   end
 
-  s3[("Amazon S3<br/>i32419/ai-deployment-monitoring-grupo-5<br/>datasets, outputs, baselines")]
-  ecr[("Amazon ECR<br/>BYOC Image")]
-  cw["CloudWatch Logs / Metrics"]
-  mlflow["MLflow Tracking Server (ARN)"]
+  s3[("Amazon S3<br/>Datasets, artifacts, baselines")]
+  sm["Amazon SageMaker<br/>Training, HPO, Registry, Endpoint, Monitor"]
+  ecr[("Amazon ECR<br/>BYOC image repository")]
+  mlflow["MLflow Tracking Server<br/>(tracking server ARN)"]
+  cw["Amazon CloudWatch<br/>Logs and metrics"]
 
-  user --> studio
-  studio --> s3
+  person -->|orchestrates workflows in Studio| system
 
-  studio --> train
-  studio --> hpo
-  train --> s3
-  hpo --> s3
-  train --> mlflow
-  hpo --> mlflow
-
-  studio --> reg
-  reg --> s3
-  studio --> card
-
-  studio --> ecr
-  ecr --> endpoint
-
-  endpoint --> datacapture
-  datacapture --> s3
-  endpoint --> cw
-
-  studio --> monitor
-  monitor --> s3
-  monitor --> cw
+  system -->|reads and writes datasets and artifacts| s3
+  system -->|creates jobs and resources| sm
+  system -->|logs selected metrics and tags| mlflow
+  system -->|publishes logs and monitoring metrics| cw
+  system -->|builds and pushes BYOC image| ecr
 ```

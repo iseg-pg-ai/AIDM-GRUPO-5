@@ -14,7 +14,7 @@ flowchart TB
     ecr[("Amazon ECR<br/>BYOC Image")]
     endpoint["SageMaker Endpoint<br/>BYOC Inference Container"]
 
-    datacapture["Endpoint Data Capture<br/>Inference inputs and outputs"]
+    datacapture["Endpoint Data Capture<br/>Inference inputs"]
     monitor["SageMaker Model Monitor<br/>Data Quality Schedule"]
 
     cw["CloudWatch Logs<br/>and Metrics"]

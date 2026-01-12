@@ -1,3 +1,4 @@
+```mermaid
 flowchart TB
   user["ML Engineer / AIDM-Grupo-5"]
 
@@ -41,3 +42,4 @@ flowchart TB
   studio --> monitor
   monitor --> s3
   monitor --> cw
+```

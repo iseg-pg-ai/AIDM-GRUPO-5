@@ -79,4 +79,3 @@ def transformation():
             "threshold": THRESHOLD
         }
         return flask.Response(response=json.dumps(result), status=200, mimetype="application/json")
-

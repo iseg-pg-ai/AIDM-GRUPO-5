@@ -62,15 +62,6 @@ def transformation():
     pred = (proba >= THRESHOLD).astype(int)
 
     # Return probability + class
-    result = {
-        "predictions": [
-            {"probability": float(p), "prediction": int(y)}
-            for p, y in zip(proba, pred)
-        ],
-        "threshold": THRESHOLD
-    }
-
-    # Return probability + class
     if "text/csv" in ct:
         # CSV output: probability,prediction
         out_df = pd.DataFrame({

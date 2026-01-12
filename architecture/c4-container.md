@@ -1,3 +1,7 @@
+# C4 — Container
+
+```mermaid
+
 flowchart TB
   user[ML Engineer / AIDM-Grupo-5]
 

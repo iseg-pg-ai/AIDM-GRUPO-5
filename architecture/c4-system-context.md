@@ -1,26 +1,46 @@
-flowchart LR
-  user[ML Engineer / AIDM-Grupo-5] --> studio[SageMaker Studio / Notebook]
+# C4 — System Context
 
-  subgraph sys["AIDM Loan Default MLOps System"]
-    studio --> sm[SageMaker APIs (Boto3 / SageMaker SDK)]
+```mermaid
+flowchart TB
+  user[ML Engineer / AIDM-Grupo-5]
+
+  subgraph boundary["AIDM Loan Default MLOps System"]
+    studio[SageMaker Studio / Notebook Python Orchestrator]
+    train[SageMaker Training Job\n(scikit-learn container)]
+    hpo[SageMaker Hyperparameter Tuning Job]
+    reg[SageMaker Model Registry\n(Model Package Group)]
+    card[SageMaker Model Card + Dashboard]
+    endpoint[SageMaker Endpoint\n(BYOC Inference Container)]
+    datacapture[Endpoint Data Capture\n(Inference inputs)]
+    monitor[SageMaker Model Monitor\n(Data Quality Schedule)]
   end
 
-  sm --> s3[(Amazon S3: i32419/ai-deployment-monitoring-grupo-5<br/>datasets, outputs, baselines)]
-  sm --> train[SageMaker Training Job]
-  sm --> hpo[SageMaker Hyperparameter Tuning Job]
-  sm --> reg[SageMaker Model Registry<br/>(Model Package Group)]
-  sm --> card[SageMaker Model Card + Model Dashboard]
-  sm --> monitor[SageMaker Model Monitor<br/>Monitoring Schedules]
-  sm --> endpoint[SageMaker Real-time Endpoint (BYOC)]
+  s3[(Amazon S3\n i32419/ai-deployment-monitoring-grupo-5\n datasets, outputs, baselines)]
+  ecr[(Amazon ECR\nBYOC Image)]
+  cw[CloudWatch Logs / Metrics]
+  mlflow[MLflow Tracking Server (ARN)]
 
+  user --> studio
+  studio --> s3
+
+  studio --> train
+  studio --> hpo
   train --> s3
   hpo --> s3
-  train --> mlflow[MLflow Tracking Server (ARN)]
+  train --> mlflow
   hpo --> mlflow
 
-  endpoint --> cw[CloudWatch Logs/Metrics]
-  monitor --> cw
-  endpoint --> s3
-  monitor --> s3
+  studio --> reg
+  reg --> s3
+  studio --> card
 
-  github[GitHub Repo / Pull Request] --> user
+  studio --> ecr
+  ecr --> endpoint
+
+  endpoint --> datacapture
+  datacapture --> s3
+  endpoint --> cw
+
+  studio --> monitor
+  monitor --> s3
+  monitor --> cw

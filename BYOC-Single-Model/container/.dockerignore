@@ -1,0 +1,4 @@
+Classificador-binario/.venv
+Classificador-binario/__pycache__/
+Classificador-binario/.ipynb_checkpoints/
+*.pyc

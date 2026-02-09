@@ -25,6 +25,7 @@ def ping():
 
 @app.route('/invocations', methods=['POST'])
 def transformation():
+# Lê o Content-Type do request HTTP e evita erro se header não existir
     ct = (flask.request.content_type or "").lower()
     
     if "text/csv" in ct:
@@ -32,18 +33,19 @@ def transformation():
         # Espera CSV com header
         X = pd.read_csv(io.StringIO(body))
     else:
-        #Process input
+        # Processa inputa
         input_json = flask.request.get_json()
         # Formatos Aceites:
-        # 1) {"input": {...}}  (single row)
-        # 2) {"input": [{...}, {...}]} (multiple rows)
-        # 3) {"instances": [{...}, {...}]} (common format)
-        payload = None
+        # 1) {"input": {...}}  (apenas 1 linha)
+        # 2) {"input": [{...}, {...}]} (múltiplas linhas)
+        # 3) {"instances": [{...}, {...}]} (formato comum)
+        payload = None # Iniciar a variável payload
         if isinstance(input_json, dict):
             if "instances" in input_json:
-                payload = input_json["instances"]
+                payload = input_json["instances"] # instances é um padrão muito comum em serving de ML (SDK's de ML, SageMaker etc...)
             else:
                 payload = input_json.get("input")
+        # Se o JSON não for um dict
         else:
             payload = input_json
 
@@ -53,7 +55,7 @@ def transformation():
                 status=400,
                 mimetype='application/json'
             )
-
+        # Trata casos de apenas uma linha e também de múltiplas linhas. Dicionários e listas de dicioários
         X = pd.DataFrame([payload]) if isinstance(payload, dict) else pd.DataFrame(payload)
 
 
@@ -61,9 +63,9 @@ def transformation():
     proba = model.predict_proba(X)[:, 1]
     pred = (proba >= THRESHOLD).astype(int)
 
-    # Return probability + class
+    # Retorna probabilidade + classe
     if "text/csv" in ct:
-        # CSV output: probability,prediction
+        # CSV output: probabilidade,previsão
         out_df = pd.DataFrame({
             "probability": [float(p) for p in proba],
             "prediction": [int(y) for y in pred],
